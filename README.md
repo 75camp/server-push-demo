@@ -2,6 +2,10 @@
 
 这是[奇舞特训营](http://t.75team.com) JavaScript 课程关于与服务器通讯部分的例子代码。
 
+因为用了 async/await 需要 Node 7.6.0 或者用 Babel 编译。
+
+可以参考[这篇文章](https://www.h5jun.com/post/manage_node_with_n.html)安装和管理多版本 Node。
+
 ## 安装
 
 ```bash
