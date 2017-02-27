@@ -29,3 +29,109 @@ node websocket.js
 ## 访问
 
 http://127.0.0.1:9999
+
+## 客户端
+
+### 轮询
+
+```html
+<script src="http://s4.qhres.com/static/6026082b2fdaf405.js"></script>
+
+<a href="###">
+  <div id="qrcode"></div>
+</a>
+
+<script>
+const qrcode = document.getElementById("qrcode");
+
+function poll(){
+  const xhr = new XMLHttpRequest(),
+      method = "GET",
+      url = "http://teach.h5jun.com/qrcode";
+
+  xhr.open(method, url, true);
+
+  xhr.onreadystatechange = function () {
+    if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+      //console.log(xhr.responseText);
+      let data = JSON.parse(xhr.responseText);
+      let url = `http://teach.h5jun.com/check/${data.code}`;
+      qrcode.innerHTML = '';
+      new QRCode(qrcode, url);
+      qrcode.parentNode.href = url;
+    }
+  };
+
+  xhr.send();
+}
+
+poll();
+setInterval(poll, 1000);
+</script>
+```
+
+### 长轮询
+
+```html
+<script src="http://s4.qhres.com/static/6026082b2fdaf405.js"></script>
+
+<a href="###">
+  <div id="qrcode"></div>
+</a>
+
+<script>
+const qrcode = document.getElementById("qrcode");
+
+function long_poll(code){
+  const xhr = new XMLHttpRequest(),
+      method = "GET",
+      url = `http://teach.h5jun.com/qrcode/${code}`;
+
+  xhr.open(method, url, true);
+
+  xhr.onreadystatechange = function () {
+    if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+      //console.log(xhr.responseText);
+      let data = JSON.parse(xhr.responseText);
+      let url = `http://teach.h5jun.com/check/${data.code}`;
+      qrcode.innerHTML = '';
+      new QRCode(qrcode, url);
+      qrcode.parentNode.href = url;
+      long_poll(data.code);
+    }
+  };
+
+  xhr.send();
+}
+
+long_poll(0);
+</script>
+```
+
+### WebSocket
+
+```html
+<script src="http://s4.qhres.com/static/6026082b2fdaf405.js"></script>
+
+<a href="###">
+  <div id="qrcode"></div>
+</a>
+
+<script>
+const ws = new WebSocket('ws://teach.h5jun.com');
+const qrcode = document.getElementById("qrcode");
+
+ws.addEventListener('open', function (event) {
+    ws.send('open');
+});
+
+ws.addEventListener('message', function (event) {
+    //console.log('Message from server', event.data);
+    
+    let url = `http://teach.h5jun.com/check/${event.data}`;
+    qrcode.innerHTML = '';
+    new QRCode(qrcode, url);
+    qrcode.parentNode.href = url;
+});
+</script>
+```
